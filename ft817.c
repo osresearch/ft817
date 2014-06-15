@@ -281,8 +281,9 @@ ft817_repeater_offset(
 	unsigned long freq
 )
 {
+	// does not work?
 	uint8_t buf[] = { 0, 0, 0, 0, FT817_CMD_REPEATER_OFFSET };
-	bcd_pack(buf, freq, 4);
+	bcd_pack(buf, freq/10000, 4);
 
 	return ft817_write_buf(fd, buf, sizeof(buf));
 }

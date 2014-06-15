@@ -17,7 +17,7 @@ static struct option long_options[] =
 	{"device", required_argument, 0,	'd' },
 	{"baud", required_argument, 0,		'b' },
 	{"frequency", required_argument, 0,	'f' },
-	{"ctcss", required_argument, 0, 	't' },
+	{"tone", required_argument, 0, 		't' },
 	{"mode", required_argument, 0,		'm' },
 	{"offset", required_argument, 0,	'o' },
 	{0,0,0,0},
@@ -91,10 +91,6 @@ main(
 	if (fd < 0)
 		die("%s: Unable to open\n", dev_name);
 
-	// retrieve the current status
-	ft817_write(fd, 0x00, 0x00, 0x00, 0x00, FT817_CMD_READ_MODE);
-	usleep(500e3);
-
 	// \todo: Parse the frquency string
 	// 144.01234+600@143.3
 	// freq([+-][offset]?)?(@tone)?
@@ -116,18 +112,21 @@ main(
 	if (tone_str)
 	{
 		unsigned ctcss_freq = atof(tone_str) * 10;
-		ft817_ctcss_mode(fd, FT817_CTCSS_ENABLE);
-		usleep(500e3);
-		ft817_ctcss(fd, ctcss_freq);
-		usleep(500e3);
-	} else {
-		ft817_ctcss_mode(fd, FT817_CTCSS_DCS_DISABLE);
-		usleep(500e3);
+		if (ctcss_freq == 0)
+		{
+			ft817_ctcss_mode(fd, FT817_CTCSS_DCS_DISABLE);
+			usleep(500e3);
+		} else {
+			ft817_ctcss_mode(fd, FT817_CTCSS_DCS_ENABLE);
+			usleep(500e3);
+			ft817_ctcss(fd, ctcss_freq);
+			usleep(500e3);
+		}
 	}
 
 	if (offset_str)
 	{
-		int offset = atof(offset_str) * 1e6;
+		int offset = atof(offset_str) * 1.0e6;
 		if (offset == 0)
 		{
 			ft817_repeater_dir(fd, FT817_REPEATER_DIR_SIMPLEX);
@@ -139,6 +138,7 @@ main(
 		} else {
 			ft817_repeater_dir(fd, FT817_REPEATER_DIR_PLUS);
 		}
+		printf("repeater offset: %d\n", offset);
 		ft817_repeater_offset(fd, offset);
 		usleep(500e3);
 	}
