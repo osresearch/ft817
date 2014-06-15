@@ -77,4 +77,55 @@ ft817_flush(
 );
 
 
+extern int
+ft817_tune(
+	int fd,
+	unsigned long freq
+);
+
+
+extern int
+ft817_read_freq(
+	int fd,
+	unsigned long *freq,
+	uint8_t * mode
+);
+
+
+extern int
+ft817_set_mode(
+	int fd,
+	uint8_t mode
+);
+
+
+extern int
+ft817_ctcss_mode(
+	int fd,
+	uint8_t mode
+);
+
+
+/** Frequency is in 0.1 Hz */
+extern int
+ft817_ctcss(
+	int fd,
+	unsigned long freq
+);
+
+
+extern int
+ft817_repeater_dir(
+	int fd,
+	uint8_t mode
+);
+
+
+extern int
+ft817_repeater_offset(
+	int fd,
+	unsigned long freq
+);
+
+
 #endif
