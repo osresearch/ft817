@@ -124,6 +124,9 @@ main(
 		warn("%s: ignoring stale data: read %zu bytes\n", dev_name, rlen);
 	}
 
+	fprintf(stderr, "ID: ");
+	hexdump(stderr, buf, rlen);
+
 	// iterate through the read eeprom commands; this returns two bytes
 	// at a time.  Experimentally, the eeprom only goes up to 0x1925;
 	// there will be a duplicate byte for 0x1926.
