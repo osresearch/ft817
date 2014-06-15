@@ -5,6 +5,17 @@
 
 #define FT817_CMD_TUNE		0x01
 
+#define FT817_CMD_READ_MODE	0x03
+#define FT817_MODE_LSB		0x00
+#define FT817_MODE_USB		0x01
+#define FT817_MODE_CW		0x02
+#define FT817_MODE_CWR		0x03
+#define FT817_MODE_AM		0x04
+#define FT817_MODE_WFM		0x06
+#define FT817_MODE_FM		0x08
+#define FT817_MODE_DIG		0x0A
+#define FT817_MODE_PKT		0x0C
+
 #define FT817_CMD_CTCSS		0x0B
 
 #define FT817_CMD_CTCSS_DCS	0x0A
@@ -37,6 +48,13 @@ ft817_write(
 	uint8_t b5
 );
 
+extern ssize_t
+ft817_write_buf(
+	int fd,
+	const void * buf,
+	size_t len
+);
+
 
 extern ssize_t
 ft817_read(
@@ -45,6 +63,12 @@ ft817_read(
 	size_t max_len,
 	size_t min_len,
 	int timeout_ms
+);
+
+
+extern void
+ft817_flush(
+	int fd
 );
 
 

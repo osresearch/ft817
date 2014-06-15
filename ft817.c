@@ -12,6 +12,23 @@ int ft817_debug = 1;
 
 
 ssize_t
+ft817_write_buf(
+	int fd,
+	const void * buf,
+	size_t len
+)
+{
+	if (ft817_debug)
+	{
+		fprintf(stderr, "Sending: ");
+		hexdump(stderr, buf, len);
+	}
+
+	return write_all(fd, buf, len);
+}
+
+
+ssize_t
 ft817_write(
 	int fd,
 	uint8_t b1,
@@ -22,13 +39,7 @@ ft817_write(
 )
 {
 	uint8_t buf[] = { b1, b2, b3, b4, b5 };
-	if (ft817_debug)
-	{
-		fprintf(stderr, "Sending: ");
-		hexdump(stderr, buf, sizeof(buf));
-	}
-
-	return write_all(fd, buf, sizeof(buf));
+	return ft817_write_buf(fd, buf, sizeof(buf));
 }
 
 
