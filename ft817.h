@@ -5,6 +5,8 @@
 
 #define FT817_CMD_TUNE		0x01
 
+#define FT817_CMD_SET_MODE	0x07
+
 #define FT817_CMD_READ_MODE	0x03
 #define FT817_MODE_LSB		0x00
 #define FT817_MODE_USB		0x01

@@ -15,8 +15,6 @@ bcd_pack(
 	int digits
 )
 {
-	printf("pack %lu:", val);
-
 	for (int i = 0 ; i < digits ; i+=2)
 	{
 		uint8_t byte = val % 100;
@@ -26,9 +24,6 @@ bcd_pack(
 
 		buf[(digits - i)/ 2 - 1] = (tens << 4) | ones;
 	}
-
-	hexdump(stdout, buf, digits/2);
-
 }
 
 
@@ -79,6 +74,22 @@ ft817_read_freq(
 	*mode = buf[4];
 
 	return 0;
+}
+
+int
+ft817_set_mode(
+	int fd,
+	uint8_t mode
+)
+{
+	return ft817_write(
+		fd,
+		mode,
+		0x00,
+		0x00,
+		0x00,
+		FT817_CMD_SET_MODE
+	);
 }
 
 
@@ -174,6 +185,7 @@ main(
 
 	unsigned long freq = atof("144.012345") * 1.0e6;
 	ft817_tune(fd, freq);
+	ft817_set_mode(fd, FT817_MODE_FM);
 
 	unsigned ctcss_freq = 141.3 * 10;
 	ft817_ctcss_mode(fd, FT817_CTCSS_ENABLE);
