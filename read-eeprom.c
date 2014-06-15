@@ -60,7 +60,7 @@ read_response(
 
 		// a timeout occured
 		if (rc == 0)
-			return 0;
+			break;
 
 		if (!FD_ISSET(fd, &rd_fds))
 		{
@@ -124,8 +124,17 @@ main(
 		warn("%s: ignoring stale data: read %zu bytes\n", dev_name, rlen);
 	}
 
-	// iterate through the read eeprom commands
-	//for (uint16_t addr = 0 ; 
+	// iterate through the read eeprom commands; this returns two bytes
+	// at a time
+	for (unsigned addr = 0 ; addr < 65536 ; addr += 2)
+	{
+		uint8_t hi = (addr >> 8) & 0xFF;
+		uint8_t lo = (addr >> 0) & 0xFF;
+		write_command(fd, hi, lo, 0x00, 0x00, 0xBB);
+		rlen = read_response(fd, buf, sizeof(buf), 2, 100);
+		if (rlen <= 0)
+			break;
+	}
 
 	return 0;
 }
