@@ -3,7 +3,7 @@
 #include <sys/select.h>
 #include "util.h"
 
-int debug = 1;
+int debug = 0;
 
 
 static ssize_t
@@ -125,16 +125,37 @@ main(
 	}
 
 	// iterate through the read eeprom commands; this returns two bytes
-	// at a time
-	for (unsigned addr = 0 ; addr < 65536 ; addr += 2)
+	// at a time.  Experimentally, the eeprom only goes up to 0x1925;
+	// there will be a duplicate byte for 0x1926.
+	unsigned max_addr = 0x1926;
+	uint8_t * eeprom = calloc(1, max_addr);
+	
+	for (unsigned addr = 0 ; addr < max_addr ; addr += 2)
 	{
+
 		uint8_t hi = (addr >> 8) & 0xFF;
 		uint8_t lo = (addr >> 0) & 0xFF;
+
+		if (lo == 0)
+			fprintf(stderr, "reading 0x%04x\n", addr);
+
 		write_command(fd, hi, lo, 0x00, 0x00, 0xBB);
 		rlen = read_response(fd, buf, sizeof(buf), 2, 100);
 		if (rlen <= 0)
+		{
+			warn("%s: Only read up to 0x%04x\n", dev_name, addr);
 			break;
+		}
+		if (rlen != 2)
+		{
+			warn("%s: short read at 0x%04x\n", dev_name, addr);
+		}
+
+		eeprom[addr] = buf[0];
+		eeprom[addr] = buf[1];
 	}
+
+	write_all(1, eeprom, max_addr);
 
 	return 0;
 }
