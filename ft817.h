@@ -33,6 +33,9 @@
 
 #define FT817_CMD_REPEATER_OFFSET	0xF9
 
+
+extern int ft817_debug;
+
 extern int
 ft817_open(
 	const char * dev_name,
