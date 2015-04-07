@@ -14,5 +14,5 @@ util.o: util.c
 
 tune.o: tune.c
 
-clane:
-        rm -rf *.o ft817 read-eeprom
+clean:
+	rm -rf *.o ft817 read-eeprom
